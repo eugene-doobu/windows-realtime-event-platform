@@ -1,0 +1,35 @@
+{
+  "scenario_id": "synthetic-public-issue",
+  "checks": [
+    {
+      "check_id": "scenario_id_matches",
+      "kind": "scenario_id_matches",
+      "expected": "synthetic-public-issue"
+    },
+    {
+      "check_id": "round_count_matches",
+      "kind": "round_count",
+      "expected": 10
+    },
+    {
+      "check_id": "positive_posts_produced",
+      "kind": "positive_posts",
+      "expected": true
+    },
+    {
+      "check_id": "stance_values_bounded",
+      "kind": "stance_bounds",
+      "expected": true,
+      "lower": -1.0,
+      "upper": 1.0
+    },
+    {
+      "check_id": "young_workers_clarification_lifts_stance",
+      "kind": "group_metric_greater_than",
+      "group_id": "young_workers",
+      "metric": "mean_stance",
+      "required_run_mode": "standard",
+      "expected": -0.25
+    }
+  ]
+}

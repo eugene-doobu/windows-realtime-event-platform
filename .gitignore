@@ -1,0 +1,53 @@
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+_skbuild/
+dist/
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+bin/
+build/
+out/
+x64/
+x86/
+Debug/
+Release/
+
+# Logs and dumps
+logs/
+artifacts/
+artifacts/runs/
+artifacts/dumps/
+runtime_scenarios/*
+!runtime_scenarios/.gitkeep
+*.log
+*.dmp
+
+# Temporary files
+*.tmp
+*.bak
+*.obj
+*.pdb
+*.ilk
+*.idb
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
+Desktop.ini

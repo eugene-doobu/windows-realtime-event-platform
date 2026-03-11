@@ -1,0 +1,43 @@
+[build-system]
+requires = [
+  "scikit-build-core>=0.10",
+  "pybind11>=2.13",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "simlab-engine"
+version = "0.1.0"
+description = "Public large-scale agent simulation engine with a C++ kernel."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [
+  { name = "ssund" },
+]
+dependencies = [
+  "fastapi>=0.116,<1.0",
+  "uvicorn>=0.35,<1.0",
+  "pydantic>=2.11,<3.0",
+  "networkx>=3.5,<4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx>=0.28,<1.0",
+  "hypothesis>=6.138,<7.0",
+  "pytest>=8.4,<9.0",
+]
+rag = [
+  "pgvector>=0.4,<1.0",
+  "psycopg[binary]>=3.2,<4.0",
+  "sentence-transformers>=5.1,<6.0",
+]
+
+[tool.scikit-build]
+cmake.source-dir = "."
+wheel.packages = ["python/simlab"]
+
+[tool.pytest.ini_options]
+pythonpath = ["python"]
+testpaths = ["tests/python"]
