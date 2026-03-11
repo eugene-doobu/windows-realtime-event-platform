@@ -130,8 +130,8 @@ this file as the practical build order.
 
 ## K. Control Plane Hardening
 
-- [ ] `K-001` Run API should launch simulations as subprocesses again
-- [ ] `K-002` Persist pending vs completed vs failed status
+- [x] `K-001` Run API should launch simulations as subprocesses again
+- [x] `K-002` Persist pending vs completed vs failed status
 - [x] `K-003` Return early failure reason when grounding setup is missing
 - [ ] `K-004` Add artifact download endpoint
 - [ ] `K-005` Add run comparison endpoint

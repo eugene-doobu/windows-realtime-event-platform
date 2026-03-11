@@ -55,11 +55,12 @@ def bootstrap_run(
     run_mode: RunMode = RunMode.STANDARD,
     cache_dir: Path = Path("artifacts") / "cache" / "prepared",
     grounding_settings: GroundingSettings | None = None,
+    run_id: str | None = None,
 ) -> str:
     total_started_at = perf_counter()
     scenario = Scenario.model_validate(json.loads(scenario_path.read_text(encoding="utf-8")))
     resolved_scenario = apply_run_mode(scenario, run_mode)
-    run_id = str(uuid4())
+    run_id = run_id or str(uuid4())
     run_dir = ensure_directory(output_dir / run_id)
     grounding_status = GroundingStatusArtifact(
         run_id=run_id,

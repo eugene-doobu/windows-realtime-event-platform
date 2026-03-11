@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
+from pydantic import ValidationError
 
 from simlab.runner.execution import RunMode
-from simlab.runner.launch import RunBootstrapError, bootstrap_run
+from simlab.runner.subprocess_runner import launch_run_process
+from simlab.schemas.scenario import Scenario
 from simlab.storage.db import connect
 from simlab.storage.runs import create_run as create_run_record
 from simlab.storage.runs import get_run, list_runs as list_run_records
@@ -43,7 +46,7 @@ router = APIRouter(prefix="/runs", tags=["runs"])
 
 
 @router.get("")
-def list_runs(request: Request) -> list[dict[str, str]]:
+def list_runs(request: Request) -> list[dict[str, object]]:
     connection = connect(request.app.state.paths.db_path)
     try:
         return list_run_records(connection)
@@ -58,32 +61,38 @@ def create_run(request: Request, payload: RunCreateRequest) -> RunCreateResponse
         raise HTTPException(status_code=404, detail="scenario file not found")
 
     try:
-        run_id = bootstrap_run(
-            scenario_path,
-            request.app.state.paths.runs_dir,
-            run_mode=payload.run_mode,
-            cache_dir=request.app.state.paths.cache_dir,
-            grounding_settings=request.app.state.grounding_settings,
-        )
-    except RunBootstrapError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    run_config = _load_json(request.app.state.paths.runs_dir / run_id / "run_config.json")
+        scenario = Scenario.model_validate(json.loads(scenario_path.read_text(encoding="utf-8")))
+    except (json.JSONDecodeError, ValidationError) as exc:
+        raise HTTPException(status_code=400, detail=f"invalid scenario: {exc}") from exc
+
+    run_id = str(uuid4())
+    artifact_dir = request.app.state.paths.runs_dir / run_id
 
     connection = connect(request.app.state.paths.db_path)
     try:
         create_run_record(
             connection,
             run_id=run_id,
-            scenario_id=str(run_config["scenario_id"]),
-            status="completed",
-            artifact_dir=request.app.state.paths.runs_dir / run_id,
-            run_mode=str(run_config["run_mode"]),
-            kernel_backend=str(run_config["kernel_backend"]),
+            scenario_id=scenario.scenario_id,
+            status="pending",
+            artifact_dir=artifact_dir,
+            run_mode=payload.run_mode.value,
+            kernel_backend="pending",
         )
     finally:
         connection.close()
 
-    return RunCreateResponse(run_id=run_id, status="completed")
+    launch_run_process(
+        run_id=run_id,
+        scenario_path=scenario_path,
+        output_dir=request.app.state.paths.runs_dir,
+        cache_dir=request.app.state.paths.cache_dir,
+        db_path=request.app.state.paths.db_path,
+        run_mode=payload.run_mode,
+        grounding_settings=request.app.state.grounding_settings,
+    )
+
+    return RunCreateResponse(run_id=run_id, status="pending")
 
 
 @router.get("/{run_id}")
@@ -113,6 +122,8 @@ def get_run_artifacts(request: Request, run_id: str) -> RunArtifactsResponse:
 
     if run is None:
         raise HTTPException(status_code=404, detail="run not found")
+    if run["status"] != "completed":
+        raise HTTPException(status_code=409, detail=f"artifacts unavailable while run is {run['status']}")
 
     run_dir = Path(run["artifact_dir"])
     available_files = sorted(path.name for path in run_dir.iterdir() if path.is_file())

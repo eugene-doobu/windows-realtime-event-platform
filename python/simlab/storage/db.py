@@ -22,12 +22,16 @@ def initialize(connection: sqlite3.Connection) -> None:
             artifact_dir TEXT NOT NULL,
             run_mode TEXT NOT NULL DEFAULT 'standard',
             kernel_backend TEXT NOT NULL DEFAULT 'unknown',
-            created_at TEXT NOT NULL
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            error_message TEXT
         )
         """
     )
     _ensure_column(connection, "runs", "run_mode", "TEXT NOT NULL DEFAULT 'standard'")
     _ensure_column(connection, "runs", "kernel_backend", "TEXT NOT NULL DEFAULT 'unknown'")
+    _ensure_column(connection, "runs", "updated_at", "TEXT")
+    _ensure_column(connection, "runs", "error_message", "TEXT")
     connection.commit()
 
 

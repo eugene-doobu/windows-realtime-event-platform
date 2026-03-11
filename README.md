@@ -134,6 +134,16 @@ curl -X POST http://127.0.0.1:8000/runs ^
   -d "{\"scenario_path\":\"fixtures/synthetic_public_issue/scenario.json\",\"run_mode\":\"smoke\"}"
 ```
 
+The API now creates a `pending` run record first and executes the simulation in
+the background. Poll the run until `status` becomes `completed` or `failed`.
+
+```powershell
+curl http://127.0.0.1:8000/runs/{run_id}
+curl http://127.0.0.1:8000/runs/{run_id}/artifacts
+```
+
+`/runs/{run_id}/artifacts` is available only after the run completes.
+
 Expected artifacts:
 
 - `run_config.json`
