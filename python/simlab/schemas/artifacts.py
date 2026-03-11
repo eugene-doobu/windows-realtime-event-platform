@@ -287,7 +287,14 @@ class SummaryArtifact(BaseModel):
     kernel_time_ms: float = 0.0
     interaction_time_ms: float = 0.0
     grounding_time_ms: float = 0.0
+    state_generation_time_ms: float = 0.0
+    graph_generation_time_ms: float = 0.0
+    config_generation_time_ms: float = 0.0
     edge_count: int = 0
+    estimated_state_bytes: int = 0
+    estimated_graph_bytes: int = 0
+    estimated_persona_bytes: int = 0
+    estimated_total_prepared_bytes: int = 0
     final_round_index: int
     final_mean_stance: float
     final_mean_trust: float
@@ -298,11 +305,20 @@ class SummaryArtifact(BaseModel):
 class BenchmarkEntry(BaseModel):
     population_size: int
     rounds: int
+    repeat_count: int
+    successful_runs: int
+    failed_runs: int
     edge_count: int
+    state_generation_time_ms: float
+    graph_generation_time_ms: float
+    config_generation_time_ms: float
     prepare_time_ms: float
     kernel_time_ms: float
     interaction_time_ms: float
     total_time_ms: float
+    min_total_time_ms: float
+    max_total_time_ms: float
+    estimated_total_prepared_bytes: int
     final_mean_stance: float
     final_mean_trust: float
 
@@ -311,3 +327,24 @@ class BenchmarkArtifact(BaseModel):
     scenario_id: str
     kernel_backend: str
     entries: list[BenchmarkEntry]
+
+
+class RuntimeProfileArtifact(BaseModel):
+    run_id: str
+    scenario_id: str
+    run_mode: str
+    prepared_input_source: str
+    population_size: int
+    edge_count: int
+    execution_time_ms: float
+    grounding_time_ms: float
+    prepare_time_ms: float
+    state_generation_time_ms: float
+    graph_generation_time_ms: float
+    config_generation_time_ms: float
+    kernel_time_ms: float
+    interaction_time_ms: float
+    estimated_state_bytes: int
+    estimated_graph_bytes: int
+    estimated_persona_bytes: int
+    estimated_total_prepared_bytes: int

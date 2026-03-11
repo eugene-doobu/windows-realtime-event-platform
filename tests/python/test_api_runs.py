@@ -45,6 +45,7 @@ def test_api_run_lifecycle(tmp_path: Path, monkeypatch) -> None:
         artifact_payload = artifact_response.json()
         assert artifact_payload["run_config"]["run_mode"] == "smoke"
         assert artifact_payload["summary"]["validation_passed"] is True
+        assert artifact_payload["runtime_profile"]["estimated_total_prepared_bytes"] > 0
         assert artifact_payload["grounding_status"]["status"] == "disabled"
         assert artifact_payload["persona_snapshot"]["population_size"] == 100
         assert artifact_payload["persona_validation"]["passed"] is True

@@ -115,10 +115,10 @@ this file as the practical build order.
 - [x] `I-001` Add kernel benchmark script for `100`, `300`, `1000` agents
 - [x] `I-002` Record per-run execution time in artifacts
 - [x] `I-003` Record graph edge count in artifacts
-- [ ] `I-004` Add memory footprint estimate in summary
-- [ ] `I-005` Verify `1000` agents complete reliably under `standard`
-- [ ] `I-006` Verify `3000` agents under a benchmark mode
-- [ ] `I-007` Profile graph generation vs kernel execution cost
+- [x] `I-004` Add memory footprint estimate in summary
+- [x] `I-005` Verify `1000` agents complete reliably under `standard`
+- [x] `I-006` Verify `3000` agents under a benchmark mode
+- [x] `I-007` Profile graph generation vs kernel execution cost
 
 ## J. Analysis And Visualization
 

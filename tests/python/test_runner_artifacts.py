@@ -28,6 +28,7 @@ def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
     assert (run_dir / "validation.json").exists()
     assert (run_dir / "timeline.jsonl").exists()
     assert (run_dir / "summary.json").exists()
+    assert (run_dir / "runtime_profile.json").exists()
     assert (run_dir / "grounding_status.json").exists()
     assert (run_dir / "persona_snapshot.json").exists()
     assert (run_dir / "persona_validation.json").exists()
@@ -42,6 +43,7 @@ def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
     validation = json.loads((run_dir / "validation.json").read_text(encoding="utf-8"))
     run_config = json.loads((run_dir / "run_config.json").read_text(encoding="utf-8"))
     summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
+    runtime_profile = json.loads((run_dir / "runtime_profile.json").read_text(encoding="utf-8"))
     grounding_status = json.loads((run_dir / "grounding_status.json").read_text(encoding="utf-8"))
     persona_snapshot = json.loads((run_dir / "persona_snapshot.json").read_text(encoding="utf-8"))
     persona_validation = json.loads((run_dir / "persona_validation.json").read_text(encoding="utf-8"))
@@ -71,6 +73,10 @@ def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
     assert summary["kernel_time_ms"] >= 0.0
     assert summary["interaction_time_ms"] >= 0.0
     assert summary["edge_count"] > 0
+    assert summary["estimated_total_prepared_bytes"] > 0
+    assert summary["graph_generation_time_ms"] >= 0.0
+    assert runtime_profile["estimated_total_prepared_bytes"] == summary["estimated_total_prepared_bytes"]
+    assert runtime_profile["edge_count"] == summary["edge_count"]
 
 
 def test_bootstrap_run_reuses_prepared_input_cache(tmp_path: Path) -> None:
@@ -109,6 +115,7 @@ def test_bootstrap_run_reuses_prepared_input_cache(tmp_path: Path) -> None:
     assert not (tmp_path / first_run_id / "timeline.jsonl").exists()
     assert not (tmp_path / second_run_id / "timeline.jsonl").exists()
     assert (tmp_path / first_run_id / "summary.json").exists()
+    assert (tmp_path / first_run_id / "runtime_profile.json").exists()
     assert (tmp_path / first_run_id / "persona_snapshot.json").exists()
     assert (tmp_path / first_run_id / "persona_validation.json").exists()
     assert (tmp_path / first_run_id / "interaction_summary.json").exists()

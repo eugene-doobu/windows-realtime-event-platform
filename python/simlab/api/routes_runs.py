@@ -33,6 +33,7 @@ class RunArtifactsResponse(BaseModel):
     available_files: list[str]
     run_config: dict[str, object]
     summary: dict[str, object] | None
+    runtime_profile: dict[str, object] | None
     validation: dict[str, object]
     grounding: dict[str, object] | None
     grounding_status: dict[str, object] | None
@@ -133,6 +134,7 @@ def get_run_artifacts(request: Request, run_id: str) -> RunArtifactsResponse:
         available_files=available_files,
         run_config=_load_json(run_dir / "run_config.json"),
         summary=_load_json_if_exists(run_dir / "summary.json"),
+        runtime_profile=_load_json_if_exists(run_dir / "runtime_profile.json"),
         validation=_load_json(run_dir / "validation.json"),
         grounding=_load_json_if_exists(run_dir / "grounding.json"),
         grounding_status=_load_json_if_exists(run_dir / "grounding_status.json"),

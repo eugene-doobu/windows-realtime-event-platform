@@ -4,8 +4,22 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from random import Random
+from time import perf_counter
 
 from simlab.schemas.scenario import Scenario
+
+
+@dataclass(slots=True)
+class PreparationProfile:
+    population_size: int
+    edge_count: int
+    state_generation_time_ms: float
+    graph_generation_time_ms: float
+    config_generation_time_ms: float
+    estimated_state_bytes: int
+    estimated_graph_bytes: int
+    estimated_persona_bytes: int
+    estimated_total_bytes: int
 
 
 @dataclass(slots=True)
@@ -15,6 +29,7 @@ class PreparedSimulationInput:
     config: dict[str, int | list[dict[str, int | float | list[int] | list[float]]]]
     group_labels: dict[int, str]
     persona: dict[str, list[float] | list[int] | list[str] | list[dict[str, float]]]
+    profile: PreparationProfile
 
 
 def prepare_simulation_input(scenario: Scenario) -> PreparedSimulationInput:
@@ -54,6 +69,7 @@ def prepare_simulation_input(scenario: Scenario) -> PreparedSimulationInput:
 
     agent_groups: list[int] = []
 
+    state_started_at = perf_counter()
     for current_group_id, (archetype, count) in enumerate(zip(archetypes, counts, strict=True)):
         for _ in range(count):
             stance.append(_jitter(rng, archetype.base_stance, scenario.population.variation_sigma, -1.0, 1.0))
@@ -107,7 +123,9 @@ def prepare_simulation_input(scenario: Scenario) -> PreparedSimulationInput:
             tone_style.append(archetype.tone_style)
             argument_style.append(archetype.argument_style)
             agent_groups.append(current_group_id)
+    state_generation_time_ms = (perf_counter() - state_started_at) * 1000.0
 
+    graph_started_at = perf_counter()
     graph = _build_graph(
         rng=rng,
         agent_groups=agent_groups,
@@ -116,7 +134,11 @@ def prepare_simulation_input(scenario: Scenario) -> PreparedSimulationInput:
         influence=influence,
         influencer_ratio=scenario.population.influencer_ratio,
     )
+    graph_generation_time_ms = (perf_counter() - graph_started_at) * 1000.0
+
+    config_started_at = perf_counter()
     config = _build_kernel_config(scenario)
+    config_generation_time_ms = (perf_counter() - config_started_at) * 1000.0
 
     initial_state = {
         "stance": stance,
@@ -149,6 +171,22 @@ def prepare_simulation_input(scenario: Scenario) -> PreparedSimulationInput:
         "tone_style": tone_style,
         "argument_style": argument_style,
     }
+    profile = PreparationProfile(
+        population_size=population_size,
+        edge_count=len(graph["targets"]),
+        state_generation_time_ms=state_generation_time_ms,
+        graph_generation_time_ms=graph_generation_time_ms,
+        config_generation_time_ms=config_generation_time_ms,
+        estimated_state_bytes=_estimate_state_bytes(initial_state),
+        estimated_graph_bytes=_estimate_graph_bytes(graph),
+        estimated_persona_bytes=_estimate_persona_bytes(persona),
+        estimated_total_bytes=0,
+    )
+    profile.estimated_total_bytes = (
+        profile.estimated_state_bytes
+        + profile.estimated_graph_bytes
+        + profile.estimated_persona_bytes
+    )
 
     return PreparedSimulationInput(
         initial_state=initial_state,
@@ -156,6 +194,7 @@ def prepare_simulation_input(scenario: Scenario) -> PreparedSimulationInput:
         config=config,
         group_labels=group_labels,
         persona=persona,
+        profile=profile,
     )
 
 
@@ -304,3 +343,57 @@ def _build_kernel_config(scenario: Scenario) -> dict[str, int | list[dict[str, i
         "channels": channels,
         "interventions": interventions,
     }
+
+
+def _estimate_state_bytes(initial_state: dict[str, list[float] | list[int]]) -> int:
+    total = 0
+    for field_name, values in initial_state.items():
+        element_width = 4
+        if field_name == "group_id":
+            element_width = 4
+        total += len(values) * element_width
+    return total
+
+
+def _estimate_graph_bytes(graph: dict[str, list[float] | list[int]]) -> int:
+    return (
+        len(graph["offsets"]) * 4
+        + len(graph["targets"]) * 4
+        + len(graph["weights"]) * 4
+    )
+
+
+def _estimate_persona_bytes(
+    persona: dict[str, list[float] | list[int] | list[str] | list[dict[str, float]]]
+) -> int:
+    total = 0
+    for field_name, values in persona.items():
+        if field_name == "media_diet":
+            diets = values
+            assert isinstance(diets, list)
+            for diet in diets:
+                assert isinstance(diet, dict)
+                for channel, weight in diet.items():
+                    total += len(channel.encode("utf-8")) + 4
+            continue
+
+        assert isinstance(values, list)
+        if field_name in {"group_id"}:
+            total += len(values) * 4
+        elif field_name in {
+            "income_pressure",
+            "conflict_tolerance",
+            "conformity",
+            "risk_aversion",
+            "trust_in_officials_baseline",
+            "rumor_susceptibility",
+            "correction_acceptance",
+            "reply_tendency",
+            "post_tendency",
+            "reaction_tendency",
+            "verbosity",
+        }:
+            total += len(values) * 4
+        else:
+            total += sum(len(str(value).encode("utf-8")) for value in values)
+    return total

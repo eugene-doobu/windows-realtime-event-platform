@@ -31,6 +31,7 @@ from simlab.schemas.artifacts import (
     InteractionSummaryArtifact,
     MetricsArtifact,
     RoundMetric,
+    RuntimeProfileArtifact,
     RunConfigArtifact,
     TimelineEvent,
     ValidationArtifact,
@@ -197,7 +198,34 @@ def bootstrap_run(
         kernel_time_ms=kernel_time_ms,
         interaction_time_ms=interaction_time_ms,
         grounding_time_ms=grounding_time_ms,
+        state_generation_time_ms=prepared.profile.state_generation_time_ms,
+        graph_generation_time_ms=prepared.profile.graph_generation_time_ms,
+        config_generation_time_ms=prepared.profile.config_generation_time_ms,
         edge_count=len(prepared.graph["targets"]),
+        estimated_state_bytes=prepared.profile.estimated_state_bytes,
+        estimated_graph_bytes=prepared.profile.estimated_graph_bytes,
+        estimated_persona_bytes=prepared.profile.estimated_persona_bytes,
+        estimated_total_prepared_bytes=prepared.profile.estimated_total_bytes,
+    )
+    runtime_profile = RuntimeProfileArtifact(
+        run_id=run_id,
+        scenario_id=resolved_scenario.scenario_id,
+        run_mode=run_mode.value,
+        prepared_input_source=prepared_result.source,
+        population_size=prepared.profile.population_size,
+        edge_count=prepared.profile.edge_count,
+        execution_time_ms=summary.execution_time_ms,
+        grounding_time_ms=summary.grounding_time_ms,
+        prepare_time_ms=summary.prepare_time_ms,
+        state_generation_time_ms=prepared.profile.state_generation_time_ms,
+        graph_generation_time_ms=prepared.profile.graph_generation_time_ms,
+        config_generation_time_ms=prepared.profile.config_generation_time_ms,
+        kernel_time_ms=summary.kernel_time_ms,
+        interaction_time_ms=summary.interaction_time_ms,
+        estimated_state_bytes=prepared.profile.estimated_state_bytes,
+        estimated_graph_bytes=prepared.profile.estimated_graph_bytes,
+        estimated_persona_bytes=prepared.profile.estimated_persona_bytes,
+        estimated_total_prepared_bytes=prepared.profile.estimated_total_bytes,
     )
     report = build_markdown_report(
         run_config=run_config,
@@ -217,6 +245,7 @@ def bootstrap_run(
     write_json(run_dir / "metrics.json", metrics.model_dump())
     write_json(run_dir / "validation.json", validation.model_dump())
     write_json(run_dir / "summary.json", summary.model_dump())
+    write_json(run_dir / "runtime_profile.json", runtime_profile.model_dump())
     write_json(run_dir / "grounding_status.json", grounding_status.model_dump())
     write_json(run_dir / "persona_snapshot.json", persona_snapshot.model_dump())
     write_json(run_dir / "persona_validation.json", persona_validation.model_dump())

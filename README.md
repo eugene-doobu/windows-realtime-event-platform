@@ -120,6 +120,12 @@ Run a quick size benchmark:
 .\.venv\Scripts\python.exe -m simlab.tools.benchmark_runs
 ```
 
+Repeat the benchmark to check `1000` and `3000` agent stability:
+
+```powershell
+.\.venv\Scripts\python.exe -m simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
+```
+
 Run the API:
 
 ```powershell
@@ -150,6 +156,7 @@ Expected artifacts:
 - `metrics.json`
 - `validation.json`
 - `summary.json`
+- `runtime_profile.json`
 - `grounding.json` when scenario grounding is enabled
 - `report.md` for `standard` and `full`
 - `group_influence.dot` for `standard` and `full`

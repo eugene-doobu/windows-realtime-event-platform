@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from simlab.runner.execution import RunMode
-from simlab.runner.population import PreparedSimulationInput, prepare_simulation_input
+from simlab.runner.population import PreparationProfile, PreparedSimulationInput, prepare_simulation_input
 from simlab.schemas.scenario import Scenario
 
 
@@ -37,6 +37,7 @@ def load_or_prepare_prepared_input(
                 config=payload["config"],
                 group_labels={int(key): value for key, value in payload["group_labels"].items()},
                 persona=payload["persona"],
+                profile=PreparationProfile(**payload["profile"]),
             ),
             cache_key=cache_key,
             source="cache",
@@ -52,6 +53,17 @@ def load_or_prepare_prepared_input(
                 "config": prepared.config,
                 "group_labels": prepared.group_labels,
                 "persona": prepared.persona,
+                "profile": {
+                    "population_size": prepared.profile.population_size,
+                    "edge_count": prepared.profile.edge_count,
+                    "state_generation_time_ms": prepared.profile.state_generation_time_ms,
+                    "graph_generation_time_ms": prepared.profile.graph_generation_time_ms,
+                    "config_generation_time_ms": prepared.profile.config_generation_time_ms,
+                    "estimated_state_bytes": prepared.profile.estimated_state_bytes,
+                    "estimated_graph_bytes": prepared.profile.estimated_graph_bytes,
+                    "estimated_persona_bytes": prepared.profile.estimated_persona_bytes,
+                    "estimated_total_bytes": prepared.profile.estimated_total_bytes,
+                },
             },
             ensure_ascii=True,
             indent=2,
@@ -64,7 +76,7 @@ def load_or_prepare_prepared_input(
 def build_prepared_input_cache_key(*, scenario: Scenario, run_mode: RunMode) -> str:
     canonical = json.dumps(
         {
-            "version": 3,
+            "version": 4,
             "run_mode": run_mode.value,
             "scenario": scenario.model_dump(mode="json"),
         },
