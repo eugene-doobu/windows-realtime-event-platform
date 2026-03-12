@@ -51,12 +51,20 @@ def test_api_run_lifecycle(tmp_path: Path, monkeypatch) -> None:
         assert artifact_payload["persona_validation"]["passed"] is True
         assert artifact_payload["interaction_summary"]["thread_count"] > 0
         assert artifact_payload["interaction_validation"]["passed"] is True
+        assert len(artifact_payload["group_action_summary"]["groups"]) > 0
+        assert len(artifact_payload["group_round_summary"]["rounds"]) > 0
+        assert len(artifact_payload["narrative_dominance"]["rounds"]) > 0
+        assert artifact_payload["representative_thread"]["thread_id"] is not None
         assert "summary.json" in artifact_payload["available_files"]
         assert "grounding_status.json" in artifact_payload["available_files"]
         assert "persona_snapshot.json" in artifact_payload["available_files"]
         assert "persona_validation.json" in artifact_payload["available_files"]
         assert "interaction_summary.json" in artifact_payload["available_files"]
         assert "interaction_validation.json" in artifact_payload["available_files"]
+        assert "group_action_summary.json" in artifact_payload["available_files"]
+        assert "group_round_summary.json" in artifact_payload["available_files"]
+        assert "narrative_dominance.json" in artifact_payload["available_files"]
+        assert "representative_thread.json" in artifact_payload["available_files"]
         assert "threads.jsonl" in artifact_payload["available_files"]
         assert "conversation.jsonl" in artifact_payload["available_files"]
         assert "timeline.jsonl" not in artifact_payload["available_files"]
@@ -109,6 +117,8 @@ def test_api_artifacts_include_grounding_when_present(tmp_path: Path, monkeypatc
         assert artifact_payload["persona_validation"]["passed"] is True
         assert artifact_payload["interaction_summary"]["thread_count"] > 0
         assert artifact_payload["interaction_validation"]["passed"] is True
+        assert len(artifact_payload["group_action_summary"]["groups"]) > 0
+        assert artifact_payload["representative_thread"]["thread_id"] is not None
         assert "grounding.json" in artifact_payload["available_files"]
 
 

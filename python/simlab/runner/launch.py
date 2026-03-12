@@ -8,6 +8,7 @@ from pathlib import Path
 from time import perf_counter
 from uuid import uuid4
 
+from simlab.analysis import build_interaction_analysis_artifacts
 from simlab.config import GroundingSettings, load_grounding_settings
 from simlab.expression import render_conversation
 from simlab.grounding import GroundingError, ground_scenario
@@ -39,6 +40,7 @@ from simlab.schemas.artifacts import (
 from simlab.schemas.scenario import Scenario
 from simlab.validation.checks import validate_run
 from simlab.visualization.group_graph import write_group_influence_graph
+from simlab.visualization.thread_graph import write_representative_thread_graph
 
 
 class RunBootstrapError(RuntimeError):
@@ -153,6 +155,14 @@ def bootstrap_run(
         reactions=interaction_artifacts.reactions,
         conversation=conversation,
     )
+    analysis_artifacts = build_interaction_analysis_artifacts(
+        run_id=run_id,
+        scenario_id=resolved_scenario.scenario_id,
+        interaction_summary=interaction_artifacts.summary,
+        threads=interaction_artifacts.threads,
+        messages=interaction_artifacts.messages,
+        reactions=interaction_artifacts.reactions,
+    )
     interaction_time_ms = (perf_counter() - interaction_started_at) * 1000.0
 
     run_config = RunConfigArtifact(
@@ -237,6 +247,10 @@ def bootstrap_run(
         persona_validation=persona_validation,
         interaction_summary=interaction_artifacts.summary,
         interaction_validation=interaction_validation,
+        group_action_summary=analysis_artifacts.group_action_summary,
+        group_round_summary=analysis_artifacts.group_round_summary,
+        narrative_dominance=analysis_artifacts.narrative_dominance,
+        representative_thread=analysis_artifacts.representative_thread,
         conversation=conversation,
     )
     timeline = _build_timeline(resolved_scenario)
@@ -251,6 +265,10 @@ def bootstrap_run(
     write_json(run_dir / "persona_validation.json", persona_validation.model_dump())
     write_json(run_dir / "interaction_summary.json", interaction_artifacts.summary.model_dump())
     write_json(run_dir / "interaction_validation.json", interaction_validation.model_dump())
+    write_json(run_dir / "group_action_summary.json", analysis_artifacts.group_action_summary.model_dump())
+    write_json(run_dir / "group_round_summary.json", analysis_artifacts.group_round_summary.model_dump())
+    write_json(run_dir / "narrative_dominance.json", analysis_artifacts.narrative_dominance.model_dump())
+    write_json(run_dir / "representative_thread.json", analysis_artifacts.representative_thread.model_dump())
     write_jsonl(run_dir / "threads.jsonl", _build_thread_rows(interaction_artifacts))
     write_jsonl(run_dir / "conversation.jsonl", [entry.model_dump() for entry in conversation])
     if grounding_artifact is not None:
@@ -261,6 +279,8 @@ def bootstrap_run(
         timeline=timeline,
         prepared=prepared,
         report=report,
+        analysis_artifacts=analysis_artifacts,
+        interaction_artifacts=interaction_artifacts,
     )
 
     return run_id
@@ -303,6 +323,8 @@ def _write_optional_artifacts(
     timeline: list[TimelineEvent],
     prepared,
     report: str,
+    analysis_artifacts,
+    interaction_artifacts,
 ) -> None:
     if artifact_verbosity is ArtifactVerbosity.MINIMAL:
         return
@@ -311,6 +333,12 @@ def _write_optional_artifacts(
     write_group_influence_graph(
         prepared=prepared,
         path=run_dir / "group_influence.dot",
+    )
+    write_representative_thread_graph(
+        representative_thread=analysis_artifacts.representative_thread,
+        messages=interaction_artifacts.messages,
+        reactions=interaction_artifacts.reactions,
+        path=run_dir / "representative_thread.dot",
     )
 
 

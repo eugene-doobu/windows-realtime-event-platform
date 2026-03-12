@@ -41,6 +41,10 @@ class RunArtifactsResponse(BaseModel):
     persona_validation: dict[str, object] | None
     interaction_summary: dict[str, object] | None
     interaction_validation: dict[str, object] | None
+    group_action_summary: dict[str, object] | None
+    group_round_summary: dict[str, object] | None
+    narrative_dominance: dict[str, object] | None
+    representative_thread: dict[str, object] | None
 
 
 router = APIRouter(prefix="/runs", tags=["runs"])
@@ -142,6 +146,10 @@ def get_run_artifacts(request: Request, run_id: str) -> RunArtifactsResponse:
         persona_validation=_load_json_if_exists(run_dir / "persona_validation.json"),
         interaction_summary=_load_json_if_exists(run_dir / "interaction_summary.json"),
         interaction_validation=_load_json_if_exists(run_dir / "interaction_validation.json"),
+        group_action_summary=_load_json_if_exists(run_dir / "group_action_summary.json"),
+        group_round_summary=_load_json_if_exists(run_dir / "group_round_summary.json"),
+        narrative_dominance=_load_json_if_exists(run_dir / "narrative_dominance.json"),
+        representative_thread=_load_json_if_exists(run_dir / "representative_thread.json"),
     )
 
 

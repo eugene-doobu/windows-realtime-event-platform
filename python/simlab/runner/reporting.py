@@ -6,12 +6,16 @@ from pathlib import Path
 
 from simlab.schemas.artifacts import (
     ConversationEntry,
+    GroupActionSummaryArtifact,
+    GroupRoundSummaryArtifact,
     GroundingArtifact,
     InteractionSummaryArtifact,
     InteractionValidationArtifact,
     MetricsArtifact,
+    NarrativeDominanceArtifact,
     PersonaSnapshotArtifact,
     PersonaValidationArtifact,
+    RepresentativeThreadArtifact,
     RunConfigArtifact,
     SummaryArtifact,
     ValidationArtifact,
@@ -79,6 +83,10 @@ def build_markdown_report(
     persona_validation: PersonaValidationArtifact | None = None,
     interaction_summary: InteractionSummaryArtifact | None = None,
     interaction_validation: InteractionValidationArtifact | None = None,
+    group_action_summary: GroupActionSummaryArtifact | None = None,
+    group_round_summary: GroupRoundSummaryArtifact | None = None,
+    narrative_dominance: NarrativeDominanceArtifact | None = None,
+    representative_thread: RepresentativeThreadArtifact | None = None,
     conversation: list[ConversationEntry] | None = None,
 ) -> str:
     final_round = metrics.round_metrics[-1] if metrics.round_metrics else None
@@ -188,6 +196,44 @@ def build_markdown_report(
         for warning in interaction_validation.warnings:
             lines.append(f"- `WARN` {warning}")
         lines.append("")
+
+    if group_action_summary is not None:
+        lines.extend(["## Group Action Summary", ""])
+        for group in group_action_summary.groups:
+            lines.append(
+                f"- `{group.group_id}`: expressive `{group.expressive_action_count}`, share `{group.expression_share:.4f}`, dominant `{group.dominant_action}`"
+            )
+        lines.append("")
+
+    if group_round_summary is not None:
+        lines.extend(["## Group Round Movement", ""])
+        for entry in group_round_summary.rounds[:8]:
+            lines.append(
+                f"- `[r{entry.round_index}] {entry.group_id}` expressive `{entry.expressive_action_count}`, dominant narrative `{entry.dominant_narrative}`, stance proxy `{entry.narrative_stance_proxy:.4f}`"
+            )
+        lines.append("")
+
+    if narrative_dominance is not None:
+        lines.extend(["## Narrative Dominance", ""])
+        for entry in narrative_dominance.rounds:
+            lines.append(
+                f"- `[r{entry.round_index}]` dominant `{entry.dominant_narrative}` with share `{entry.dominant_share:.4f}`"
+            )
+        lines.append("")
+
+    if representative_thread is not None:
+        lines.extend(
+            [
+                "## Representative Thread",
+                "",
+                f"- Thread id: `{representative_thread.thread_id}`",
+                f"- Channel: `{representative_thread.channel_id}`",
+                f"- Narrative: `{representative_thread.narrative_token}`",
+                f"- Messages: `{representative_thread.message_count}`",
+                f"- Reactions: `{representative_thread.reaction_count}`",
+                "",
+            ]
+        )
 
     if conversation:
         lines.extend(["## Representative Conversation", ""])

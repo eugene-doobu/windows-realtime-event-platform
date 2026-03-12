@@ -274,6 +274,70 @@ class ConversationEntry(BaseModel):
     argument_style: str
 
 
+class GroupActionSummaryEntry(BaseModel):
+    group_id: str
+    activation_count: int
+    post_count: int
+    reply_count: int
+    reaction_count: int
+    ignore_count: int
+    expressive_action_count: int
+    expression_share: float
+    dominant_action: str
+
+
+class GroupActionSummaryArtifact(BaseModel):
+    run_id: str
+    scenario_id: str
+    groups: list[GroupActionSummaryEntry]
+
+
+class GroupRoundSummaryEntry(BaseModel):
+    round_index: int
+    group_id: str
+    activation_count: int
+    expressive_action_count: int
+    dominant_narrative: str | None
+    narrative_stance_proxy: float
+    post_count: int
+    reply_count: int
+    reaction_count: int
+    ignore_count: int
+
+
+class GroupRoundSummaryArtifact(BaseModel):
+    run_id: str
+    scenario_id: str
+    rounds: list[GroupRoundSummaryEntry]
+
+
+class NarrativeRoundSummaryEntry(BaseModel):
+    round_index: int
+    total_events: int
+    dominant_narrative: str | None
+    dominant_share: float
+    narrative_counts: dict[str, int]
+
+
+class NarrativeDominanceArtifact(BaseModel):
+    run_id: str
+    scenario_id: str
+    rounds: list[NarrativeRoundSummaryEntry]
+
+
+class RepresentativeThreadArtifact(BaseModel):
+    run_id: str
+    scenario_id: str
+    thread_id: str | None
+    channel_id: str | None
+    narrative_token: str | None
+    message_count: int
+    reaction_count: int
+    participant_groups: list[str]
+    message_ids: list[str]
+    reaction_ids: list[str]
+
+
 class SummaryArtifact(BaseModel):
     run_id: str
     scenario_id: str

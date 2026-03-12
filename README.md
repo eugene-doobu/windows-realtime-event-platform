@@ -157,9 +157,14 @@ Expected artifacts:
 - `validation.json`
 - `summary.json`
 - `runtime_profile.json`
+- `group_action_summary.json`
+- `group_round_summary.json`
+- `narrative_dominance.json`
+- `representative_thread.json`
 - `grounding.json` when scenario grounding is enabled
 - `report.md` for `standard` and `full`
 - `group_influence.dot` for `standard` and `full`
+- `representative_thread.dot` for `standard` and `full`
 
 ## Source of Truth
 

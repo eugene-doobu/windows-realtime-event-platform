@@ -34,10 +34,15 @@ def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
     assert (run_dir / "persona_validation.json").exists()
     assert (run_dir / "interaction_summary.json").exists()
     assert (run_dir / "interaction_validation.json").exists()
+    assert (run_dir / "group_action_summary.json").exists()
+    assert (run_dir / "group_round_summary.json").exists()
+    assert (run_dir / "narrative_dominance.json").exists()
+    assert (run_dir / "representative_thread.json").exists()
     assert (run_dir / "threads.jsonl").exists()
     assert (run_dir / "conversation.jsonl").exists()
     assert (run_dir / "report.md").exists()
     assert (run_dir / "group_influence.dot").exists()
+    assert (run_dir / "representative_thread.dot").exists()
 
     metrics = json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
     validation = json.loads((run_dir / "validation.json").read_text(encoding="utf-8"))
@@ -49,6 +54,10 @@ def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
     persona_validation = json.loads((run_dir / "persona_validation.json").read_text(encoding="utf-8"))
     interaction_summary = json.loads((run_dir / "interaction_summary.json").read_text(encoding="utf-8"))
     interaction_validation = json.loads((run_dir / "interaction_validation.json").read_text(encoding="utf-8"))
+    group_action_summary = json.loads((run_dir / "group_action_summary.json").read_text(encoding="utf-8"))
+    group_round_summary = json.loads((run_dir / "group_round_summary.json").read_text(encoding="utf-8"))
+    narrative_dominance = json.loads((run_dir / "narrative_dominance.json").read_text(encoding="utf-8"))
+    representative_thread = json.loads((run_dir / "representative_thread.json").read_text(encoding="utf-8"))
 
     assert len(metrics["round_metrics"]) == 10
     assert validation["passed"] is True
@@ -60,6 +69,10 @@ def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
     assert interaction_summary["message_count"] > 0
     assert interaction_validation["passed"] is True
     assert len(interaction_summary["round_metrics"]) == 10
+    assert len(group_action_summary["groups"]) > 0
+    assert len(group_round_summary["rounds"]) > 0
+    assert len(narrative_dominance["rounds"]) == 10
+    assert representative_thread["thread_id"] is not None
     assert run_config["kernel_backend"] in {"native", "python_fallback"}
     assert run_config["run_mode"] == "standard"
     assert run_config["artifact_verbosity"] == "standard"
@@ -120,10 +133,15 @@ def test_bootstrap_run_reuses_prepared_input_cache(tmp_path: Path) -> None:
     assert (tmp_path / first_run_id / "persona_validation.json").exists()
     assert (tmp_path / first_run_id / "interaction_summary.json").exists()
     assert (tmp_path / first_run_id / "interaction_validation.json").exists()
+    assert (tmp_path / first_run_id / "group_action_summary.json").exists()
+    assert (tmp_path / first_run_id / "group_round_summary.json").exists()
+    assert (tmp_path / first_run_id / "narrative_dominance.json").exists()
+    assert (tmp_path / first_run_id / "representative_thread.json").exists()
     assert (tmp_path / first_run_id / "threads.jsonl").exists()
     assert (tmp_path / first_run_id / "conversation.jsonl").exists()
     assert not (tmp_path / first_run_id / "report.md").exists()
     assert not (tmp_path / first_run_id / "group_influence.dot").exists()
+    assert not (tmp_path / first_run_id / "representative_thread.dot").exists()
     assert second_run_config["prepared_input_source"] == "cache"
     assert first_run_config["prepared_input_cache_key"] == second_run_config["prepared_input_cache_key"]
 
@@ -171,6 +189,10 @@ def test_bootstrap_run_writes_grounding_artifact_when_enabled(tmp_path: Path, mo
     persona_validation = json.loads((run_dir / "persona_validation.json").read_text(encoding="utf-8"))
     interaction_summary = json.loads((run_dir / "interaction_summary.json").read_text(encoding="utf-8"))
     interaction_validation = json.loads((run_dir / "interaction_validation.json").read_text(encoding="utf-8"))
+    group_action_summary = json.loads((run_dir / "group_action_summary.json").read_text(encoding="utf-8"))
+    group_round_summary = json.loads((run_dir / "group_round_summary.json").read_text(encoding="utf-8"))
+    narrative_dominance = json.loads((run_dir / "narrative_dominance.json").read_text(encoding="utf-8"))
+    representative_thread = json.loads((run_dir / "representative_thread.json").read_text(encoding="utf-8"))
     report = (run_dir / "report.md").read_text(encoding="utf-8")
 
     assert summary["grounding_enabled"] is True
@@ -184,11 +206,19 @@ def test_bootstrap_run_writes_grounding_artifact_when_enabled(tmp_path: Path, mo
     assert persona_validation["passed"] is True
     assert interaction_summary["reaction_count"] >= 0
     assert interaction_validation["passed"] is True
+    assert len(group_action_summary["groups"]) > 0
+    assert len(group_round_summary["rounds"]) > 0
+    assert narrative_dominance["rounds"][0]["dominant_narrative"] is not None
+    assert representative_thread["thread_id"] is not None
     assert "Grounding Evidence" in report
     assert "Persona Snapshot" in report
     assert "Persona Validation" in report
     assert "Interaction Summary" in report
     assert "Interaction Validation" in report
+    assert "Group Action Summary" in report
+    assert "Group Round Movement" in report
+    assert "Narrative Dominance" in report
+    assert "Representative Thread" in report
     assert "Representative Conversation" in report
 
 

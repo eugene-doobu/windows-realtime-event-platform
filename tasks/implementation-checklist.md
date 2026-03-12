@@ -122,10 +122,10 @@ this file as the practical build order.
 
 ## J. Analysis And Visualization
 
-- [ ] `J-001` Add group action summary chart data
-- [ ] `J-002` Add interaction graph export for representative threads
-- [ ] `J-003` Add round-by-round group movement summary
-- [ ] `J-004` Add narrative dominance summary by round
+- [x] `J-001` Add group action summary chart data
+- [x] `J-002` Add interaction graph export for representative threads
+- [x] `J-003` Add round-by-round group movement summary
+- [x] `J-004` Add narrative dominance summary by round
 - [ ] `J-005` Add comparison artifact between two runs
 
 ## K. Control Plane Hardening
