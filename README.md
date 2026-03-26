@@ -86,35 +86,97 @@ To keep local iteration cheap, the repository also supports:
 
 Create a local virtual environment and install the package in editable mode.
 
-On Windows with VS2022:
+### Requirements
+
+- Python `3.12+`
+- CMake `3.23+`
+- a working C++20 compiler toolchain
+
+### macOS (Apple Silicon or Intel)
+
+Install the build prerequisites with Homebrew, create a virtual environment,
+and install the project in editable mode.
+
+```bash
+brew install python@3.12 cmake
+/opt/homebrew/bin/python3.12 -m venv .venv
+./.venv/bin/python -m pip install --upgrade pip setuptools wheel
+./.venv/bin/python -m pip install -e '.[dev]'
+```
+
+On Intel Macs, Homebrew may live under `/usr/local` instead of `/opt/homebrew`.
+Use the `python3.12` path reported by `which python3.12`.
+
+This setup was validated on macOS with:
+
+- editable install success
+- native `C++` kernel available
+- smoke scenario success
+- `pytest` suite passing
+
+### Windows (VS2022)
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install pybind11 scikit-build-core fastapi uvicorn pydantic networkx hypothesis pytest httpx
-cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=x64 -host_arch=x64 >nul && ""%CD%\.venv\Scripts\python.exe"" -m pip install -e . --no-deps"
+.\.venv\Scripts\python.exe -m pip install --upgrade pip setuptools wheel
+cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=x64 -host_arch=x64 >nul && ""%CD%\.venv\Scripts\python.exe"" -m pip install -e .[dev]"
 ```
 
-Run the synthetic fixture directly:
+### Run the synthetic fixture directly
+
+macOS / Linux:
+
+```bash
+./.venv/bin/python -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode smoke
+./.venv/bin/python -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode standard
+```
+
+Windows:
 
 ```powershell
 .\.venv\Scripts\python.exe -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode smoke
 .\.venv\Scripts\python.exe -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode standard
 ```
 
-Optional runtime grounding setup:
+### Optional runtime grounding setup
+
+macOS / Linux:
+
+```bash
+./.venv/bin/python -m pip install -e '.[rag]'
+export SIMLAB_RAG_POSTGRES_DSN="postgresql://postgres:postgres@localhost:5432/simlab"
+```
+
+Windows:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -e .[rag]
 $env:SIMLAB_RAG_POSTGRES_DSN = "postgresql://postgres:postgres@localhost:5432/simlab"
 ```
 
-Run a grounded smoke check:
+### Run a grounded smoke check
+
+macOS / Linux:
+
+```bash
+./.venv/bin/python -m simlab.tools.grounding_smoke
+```
+
+Windows:
 
 ```powershell
 .\.venv\Scripts\python.exe -m simlab.tools.grounding_smoke
 ```
 
-Run a quick size benchmark:
+### Run a quick size benchmark
+
+macOS / Linux:
+
+```bash
+./.venv/bin/python -m simlab.tools.benchmark_runs
+```
+
+Windows:
 
 ```powershell
 .\.venv\Scripts\python.exe -m simlab.tools.benchmark_runs
@@ -122,17 +184,43 @@ Run a quick size benchmark:
 
 Repeat the benchmark to check `1000` and `3000` agent stability:
 
+macOS / Linux:
+
+```bash
+./.venv/bin/python -m simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
+```
+
+Windows:
+
 ```powershell
 .\.venv\Scripts\python.exe -m simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
 ```
 
-Run the API:
+### Run the API
+
+macOS / Linux:
+
+```bash
+./.venv/bin/python -m uvicorn simlab.api.main:app --reload
+```
+
+Windows:
 
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn simlab.api.main:app --reload
 ```
 
 Then create a run:
+
+macOS / Linux:
+
+```bash
+curl -X POST http://127.0.0.1:8000/runs \
+  -H "Content-Type: application/json" \
+  -d '{"scenario_path":"fixtures/synthetic_public_issue/scenario.json","run_mode":"smoke"}'
+```
+
+Windows:
 
 ```powershell
 curl -X POST http://127.0.0.1:8000/runs ^
@@ -142,6 +230,15 @@ curl -X POST http://127.0.0.1:8000/runs ^
 
 The API now creates a `pending` run record first and executes the simulation in
 the background. Poll the run until `status` becomes `completed` or `failed`.
+
+macOS / Linux:
+
+```bash
+curl http://127.0.0.1:8000/runs/{run_id}
+curl http://127.0.0.1:8000/runs/{run_id}/artifacts
+```
+
+Windows:
 
 ```powershell
 curl http://127.0.0.1:8000/runs/{run_id}
