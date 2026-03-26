@@ -1,4 +1,6 @@
-# Large-Scale Agent Simulation Engine
+# gan-simlab-engine
+
+Public large-scale agent simulation engine with a Python control plane and a C++ kernel.
 
 This repository is for building a public simulation engine with a clear split:
 
