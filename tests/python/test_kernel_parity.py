@@ -3,13 +3,13 @@ from pathlib import Path
 
 import pytest
 
-from simlab.runner.kernel_client import (
+from gan_simlab.runner.kernel_client import (
     _run_reference_kernel,
     native_kernel_available,
     run_kernel,
 )
-from simlab.runner.population import prepare_simulation_input
-from simlab.schemas.scenario import Scenario
+from gan_simlab.runner.population import prepare_simulation_input
+from gan_simlab.schemas.scenario import Scenario
 
 
 @pytest.mark.skipif(not native_kernel_available(), reason="native kernel is not installed")

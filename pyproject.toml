@@ -6,7 +6,7 @@ requires = [
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "simlab-engine"
+name = "gan-simlab-engine"
 version = "0.1.0"
 description = "Public large-scale agent simulation engine with a C++ kernel."
 readme = "README.md"
@@ -36,7 +36,7 @@ rag = [
 
 [tool.scikit-build]
 cmake.source-dir = "."
-wheel.packages = ["python/simlab"]
+wheel.packages = ["python/gan_simlab", "python/simlab"]
 
 [tool.pytest.ini_options]
 pythonpath = ["python"]

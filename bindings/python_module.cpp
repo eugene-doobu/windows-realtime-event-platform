@@ -106,8 +106,8 @@ py::dict run_simulation_py(const py::dict& initial_state, const py::dict& graph,
 
 }  // namespace
 
-PYBIND11_MODULE(simlab_cpp, module) {
-    module.doc() = "Minimal Python binding for the SimLab C++ kernel.";
+PYBIND11_MODULE(gan_simlab_cpp, module) {
+    module.doc() = "Minimal Python binding for the GAN SimLab C++ kernel.";
     module.def("version", []() { return "0.1.0"; });
     module.def(
         "run_simulation",

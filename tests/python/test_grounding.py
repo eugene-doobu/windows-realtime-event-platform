@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from simlab.config import GroundingSettings
-from simlab.grounding import build_grounding_queries, resolve_grounding_documents
-from simlab.grounding.service import GroundingQuery, retrieve_grounding_evidence_for_testing
-from simlab.schemas.scenario import Scenario
+from gan_simlab.config import GroundingSettings
+from gan_simlab.grounding import build_grounding_queries, resolve_grounding_documents
+from gan_simlab.grounding.service import GroundingQuery, retrieve_grounding_evidence_for_testing
+from gan_simlab.schemas.scenario import Scenario
 
 
 def test_resolve_grounding_documents_for_fixture() -> None:
@@ -133,7 +133,7 @@ def test_retrieve_grounding_evidence_returns_known_synthetic_snippets(monkeypatc
             return self._cursor
 
     monkeypatch.setattr(
-        "simlab.grounding.service._embed_texts",
+        "gan_simlab.grounding.service._embed_texts",
         lambda texts, model_name: [[0.1] * 384 for _ in list(texts)],
     )
 

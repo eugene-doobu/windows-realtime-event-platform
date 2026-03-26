@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from simlab.persona import build_persona_snapshot
-from simlab.runner.population import prepare_simulation_input
-from simlab.schemas.scenario import Scenario
+from gan_simlab.persona import build_persona_snapshot
+from gan_simlab.runner.population import prepare_simulation_input
+from gan_simlab.schemas.scenario import Scenario
 
 
 def test_influencer_bias_creates_higher_out_degree_nodes() -> None:

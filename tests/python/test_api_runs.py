@@ -3,18 +3,18 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from simlab.api.main import create_app
-from simlab.schemas.artifacts import GroundingArtifact, GroundingEvidence
+from gan_simlab.api.main import create_app
+from gan_simlab.schemas.artifacts import GroundingArtifact, GroundingEvidence
 
 
 def test_api_run_lifecycle(tmp_path: Path, monkeypatch) -> None:
     repo_root = Path(__file__).resolve().parents[2]
-    monkeypatch.setenv("SIMLAB_REPO_ROOT", str(repo_root))
-    monkeypatch.setenv("SIMLAB_ARTIFACTS_DIR", str(tmp_path / "artifacts"))
-    monkeypatch.setenv("SIMLAB_RUNS_DIR", str(tmp_path / "artifacts" / "api-runs"))
-    monkeypatch.setenv("SIMLAB_CACHE_DIR", str(tmp_path / "artifacts" / "cache" / "prepared"))
-    monkeypatch.setenv("SIMLAB_DB_PATH", str(tmp_path / "artifacts" / "simlab.db"))
-    monkeypatch.setenv("SIMLAB_RUN_LAUNCH_MODE", "inline")
+    monkeypatch.setenv("GAN_SIMLAB_REPO_ROOT", str(repo_root))
+    monkeypatch.setenv("GAN_SIMLAB_ARTIFACTS_DIR", str(tmp_path / "artifacts"))
+    monkeypatch.setenv("GAN_SIMLAB_RUNS_DIR", str(tmp_path / "artifacts" / "api-runs"))
+    monkeypatch.setenv("GAN_SIMLAB_CACHE_DIR", str(tmp_path / "artifacts" / "cache" / "prepared"))
+    monkeypatch.setenv("GAN_SIMLAB_DB_PATH", str(tmp_path / "artifacts" / "gan_simlab.db"))
+    monkeypatch.setenv("GAN_SIMLAB_RUN_LAUNCH_MODE", "inline")
 
     with TestClient(create_app()) as client:
         create_response = client.post(
@@ -72,14 +72,14 @@ def test_api_run_lifecycle(tmp_path: Path, monkeypatch) -> None:
 
 def test_api_artifacts_include_grounding_when_present(tmp_path: Path, monkeypatch) -> None:
     repo_root = Path(__file__).resolve().parents[2]
-    monkeypatch.setenv("SIMLAB_REPO_ROOT", str(repo_root))
-    monkeypatch.setenv("SIMLAB_ARTIFACTS_DIR", str(tmp_path / "artifacts"))
-    monkeypatch.setenv("SIMLAB_RUNS_DIR", str(tmp_path / "artifacts" / "api-runs"))
-    monkeypatch.setenv("SIMLAB_CACHE_DIR", str(tmp_path / "artifacts" / "cache" / "prepared"))
-    monkeypatch.setenv("SIMLAB_DB_PATH", str(tmp_path / "artifacts" / "simlab.db"))
-    monkeypatch.setenv("SIMLAB_RUN_LAUNCH_MODE", "inline")
+    monkeypatch.setenv("GAN_SIMLAB_REPO_ROOT", str(repo_root))
+    monkeypatch.setenv("GAN_SIMLAB_ARTIFACTS_DIR", str(tmp_path / "artifacts"))
+    monkeypatch.setenv("GAN_SIMLAB_RUNS_DIR", str(tmp_path / "artifacts" / "api-runs"))
+    monkeypatch.setenv("GAN_SIMLAB_CACHE_DIR", str(tmp_path / "artifacts" / "cache" / "prepared"))
+    monkeypatch.setenv("GAN_SIMLAB_DB_PATH", str(tmp_path / "artifacts" / "gan_simlab.db"))
+    monkeypatch.setenv("GAN_SIMLAB_RUN_LAUNCH_MODE", "inline")
     monkeypatch.setattr(
-        "simlab.runner.launch.ground_scenario",
+        "gan_simlab.runner.launch.ground_scenario",
         lambda **_: GroundingArtifact(
             run_id="ignored",
             scenario_id="synthetic-public-issue-grounded",
@@ -124,13 +124,13 @@ def test_api_artifacts_include_grounding_when_present(tmp_path: Path, monkeypatc
 
 def test_api_returns_early_grounding_failure_reason(tmp_path: Path, monkeypatch) -> None:
     repo_root = Path(__file__).resolve().parents[2]
-    monkeypatch.setenv("SIMLAB_REPO_ROOT", str(repo_root))
-    monkeypatch.setenv("SIMLAB_ARTIFACTS_DIR", str(tmp_path / "artifacts"))
-    monkeypatch.setenv("SIMLAB_RUNS_DIR", str(tmp_path / "artifacts" / "api-runs"))
-    monkeypatch.setenv("SIMLAB_CACHE_DIR", str(tmp_path / "artifacts" / "cache" / "prepared"))
-    monkeypatch.setenv("SIMLAB_DB_PATH", str(tmp_path / "artifacts" / "simlab.db"))
-    monkeypatch.setenv("SIMLAB_RUN_LAUNCH_MODE", "inline")
-    monkeypatch.delenv("SIMLAB_RAG_POSTGRES_DSN", raising=False)
+    monkeypatch.setenv("GAN_SIMLAB_REPO_ROOT", str(repo_root))
+    monkeypatch.setenv("GAN_SIMLAB_ARTIFACTS_DIR", str(tmp_path / "artifacts"))
+    monkeypatch.setenv("GAN_SIMLAB_RUNS_DIR", str(tmp_path / "artifacts" / "api-runs"))
+    monkeypatch.setenv("GAN_SIMLAB_CACHE_DIR", str(tmp_path / "artifacts" / "cache" / "prepared"))
+    monkeypatch.setenv("GAN_SIMLAB_DB_PATH", str(tmp_path / "artifacts" / "gan_simlab.db"))
+    monkeypatch.setenv("GAN_SIMLAB_RUN_LAUNCH_MODE", "inline")
+    monkeypatch.delenv("GAN_SIMLAB_RAG_POSTGRES_DSN", raising=False)
 
     with TestClient(create_app()) as client:
         create_response = client.post(
@@ -147,7 +147,7 @@ def test_api_returns_early_grounding_failure_reason(tmp_path: Path, monkeypatch)
         assert status_response.status_code == 200
         status_payload = status_response.json()
         assert status_payload["status"] == "failed"
-        assert "SIMLAB_RAG_POSTGRES_DSN" in status_payload["error_message"]
+        assert "GAN_SIMLAB_RAG_POSTGRES_DSN" in status_payload["error_message"]
 
         artifact_response = client.get(f"/runs/{run_id}/artifacts")
         assert artifact_response.status_code == 409

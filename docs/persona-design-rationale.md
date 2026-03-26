@@ -270,11 +270,11 @@ These choices were excluded to preserve:
 Current implementation points:
 
 - archetype persona fields live in
-  `python/simlab/schemas/scenario.py`
+  `python/gan_simlab/schemas/scenario.py`
 - persona instances are generated in
-  `python/simlab/runner/population.py`
+  `python/gan_simlab/runner/population.py`
 - persona artifact generation lives in
-  `python/simlab/persona/snapshot.py`
+  `python/gan_simlab/persona/snapshot.py`
 
 This is still a scaffold. The next stage is to make persona priors directly
 affect interaction actions like `post`, `reply`, and `react`.

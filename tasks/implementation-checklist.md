@@ -49,7 +49,7 @@ this file as the practical build order.
 
 ## D. Interaction Layer v1
 
-- [x] `D-001` Add `python/simlab/interaction/`
+- [x] `D-001` Add `python/gan_simlab/interaction/`
 - [x] `D-002` Define `AgentAction` schema
 - [x] `D-003` Define `Thread` schema
 - [x] `D-004` Define `Message` schema
@@ -80,7 +80,7 @@ this file as the practical build order.
 
 ## F. Expression Layer v1
 
-- [x] `F-001` Add `python/simlab/expression/`
+- [x] `F-001` Add `python/gan_simlab/expression/`
 - [x] `F-002` Define a template renderer for `post`
 - [x] `F-003` Define a template renderer for `reply`
 - [x] `F-004` Define tone templates keyed by `tone_style`

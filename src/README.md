@@ -28,22 +28,22 @@ runtime_scenarios/
 
 Suggested responsibilities:
 
-- `python/simlab/api/`
+- `python/gan_simlab/api/`
   FastAPI app and run routes
 
-- `python/simlab/runner/`
+- `python/gan_simlab/runner/`
   scenario loading, subprocess entrypoints, artifact writing
 
-- `python/simlab/schemas/`
+- `python/gan_simlab/schemas/`
   Pydantic schemas for scenarios and artifacts
 
-- `python/simlab/storage/`
+- `python/gan_simlab/storage/`
   SQLite-backed run metadata helpers
 
-- `python/simlab/validation/`
+- `python/gan_simlab/validation/`
   validation checks and synthetic benchmark helpers
 
-- `python/simlab/visualization/`
+- `python/gan_simlab/visualization/`
   graph export utilities for debugging and inspection
 
 - `cpp/include/simlab/` and `cpp/src/`

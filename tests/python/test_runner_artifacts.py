@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from simlab.schemas.artifacts import GroundingArtifact, GroundingEvidence
-from simlab.runner.execution import RunMode
-from simlab.runner.launch import RunBootstrapError, bootstrap_run
+from gan_simlab.schemas.artifacts import GroundingArtifact, GroundingEvidence
+from gan_simlab.runner.execution import RunMode
+from gan_simlab.runner.launch import RunBootstrapError, bootstrap_run
 
 
 def test_bootstrap_run_writes_minimum_artifacts(tmp_path: Path) -> None:
@@ -155,7 +155,7 @@ def test_bootstrap_run_writes_grounding_artifact_when_enabled(tmp_path: Path, mo
     )
 
     monkeypatch.setattr(
-        "simlab.runner.launch.ground_scenario",
+        "gan_simlab.runner.launch.ground_scenario",
         lambda **_: GroundingArtifact(
             run_id="ignored",
             scenario_id="synthetic-public-issue-grounded",
@@ -229,7 +229,7 @@ def test_bootstrap_run_writes_grounding_failure_status_when_dsn_missing(tmp_path
         / "synthetic_public_issue"
         / "scenario_grounded.json"
     )
-    monkeypatch.delenv("SIMLAB_RAG_POSTGRES_DSN", raising=False)
+    monkeypatch.delenv("GAN_SIMLAB_RAG_POSTGRES_DSN", raising=False)
 
     try:
         bootstrap_run(

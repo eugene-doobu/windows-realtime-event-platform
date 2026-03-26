@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from simlab.schemas.scenario import Scenario
+from gan_simlab.schemas.scenario import Scenario
 
 
 def test_fixture_scenario_validates() -> None:

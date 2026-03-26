@@ -129,15 +129,15 @@ cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\T
 macOS / Linux:
 
 ```bash
-./.venv/bin/python -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode smoke
-./.venv/bin/python -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode standard
+./.venv/bin/python -m gan_simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode smoke
+./.venv/bin/python -m gan_simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode standard
 ```
 
 Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode smoke
-.\.venv\Scripts\python.exe -m simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode standard
+.\.venv\Scripts\python.exe -m gan_simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode smoke
+.\.venv\Scripts\python.exe -m gan_simlab.runner.launch fixtures/synthetic_public_issue/scenario.json --run-mode standard
 ```
 
 ### Optional runtime grounding setup
@@ -146,14 +146,14 @@ macOS / Linux:
 
 ```bash
 ./.venv/bin/python -m pip install -e '.[rag]'
-export SIMLAB_RAG_POSTGRES_DSN="postgresql://postgres:postgres@localhost:5432/simlab"
+export GAN_SIMLAB_RAG_POSTGRES_DSN="postgresql://postgres:postgres@localhost:5432/simlab"
 ```
 
 Windows:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -e .[rag]
-$env:SIMLAB_RAG_POSTGRES_DSN = "postgresql://postgres:postgres@localhost:5432/simlab"
+$env:GAN_SIMLAB_RAG_POSTGRES_DSN = "postgresql://postgres:postgres@localhost:5432/simlab"
 ```
 
 ### Run a grounded smoke check
@@ -161,13 +161,13 @@ $env:SIMLAB_RAG_POSTGRES_DSN = "postgresql://postgres:postgres@localhost:5432/si
 macOS / Linux:
 
 ```bash
-./.venv/bin/python -m simlab.tools.grounding_smoke
+./.venv/bin/python -m gan_simlab.tools.grounding_smoke
 ```
 
 Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m simlab.tools.grounding_smoke
+.\.venv\Scripts\python.exe -m gan_simlab.tools.grounding_smoke
 ```
 
 ### Run a quick size benchmark
@@ -175,13 +175,13 @@ Windows:
 macOS / Linux:
 
 ```bash
-./.venv/bin/python -m simlab.tools.benchmark_runs
+./.venv/bin/python -m gan_simlab.tools.benchmark_runs
 ```
 
 Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m simlab.tools.benchmark_runs
+.\.venv\Scripts\python.exe -m gan_simlab.tools.benchmark_runs
 ```
 
 Repeat the benchmark to check `1000` and `3000` agent stability:
@@ -189,13 +189,13 @@ Repeat the benchmark to check `1000` and `3000` agent stability:
 macOS / Linux:
 
 ```bash
-./.venv/bin/python -m simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
+./.venv/bin/python -m gan_simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
 ```
 
 Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
+.\.venv\Scripts\python.exe -m gan_simlab.tools.benchmark_runs fixtures/synthetic_public_issue/scenario.json --sizes 100 300 1000 3000 --repeats 3
 ```
 
 ### Run the API
@@ -203,13 +203,13 @@ Windows:
 macOS / Linux:
 
 ```bash
-./.venv/bin/python -m uvicorn simlab.api.main:app --reload
+./.venv/bin/python -m uvicorn gan_simlab.api.main:app --reload
 ```
 
 Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn simlab.api.main:app --reload
+.\.venv\Scripts\python.exe -m uvicorn gan_simlab.api.main:app --reload
 ```
 
 Then create a run:

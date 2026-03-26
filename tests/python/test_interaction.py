@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
 
-from simlab.interaction import generate_interactions
-from simlab.runner.execution import RunMode
-from simlab.runner.kernel_client import run_kernel
-from simlab.runner.population import prepare_simulation_input
-from simlab.schemas.scenario import InterventionKind, Scenario
+from gan_simlab.interaction import generate_interactions
+from gan_simlab.runner.execution import RunMode
+from gan_simlab.runner.kernel_client import run_kernel
+from gan_simlab.runner.population import prepare_simulation_input
+from gan_simlab.schemas.scenario import InterventionKind, Scenario
 
 
 def _load_scenario(filename: str) -> Scenario:

@@ -1,13 +1,13 @@
 import json
 from pathlib import Path
 
-from simlab.expression import render_conversation
-from simlab.interaction import build_interaction_validation, generate_interactions
-from simlab.persona import build_persona_snapshot
-from simlab.runner.execution import RunMode
-from simlab.runner.kernel_client import run_kernel
-from simlab.runner.population import prepare_simulation_input
-from simlab.schemas.scenario import InterventionKind, Scenario
+from gan_simlab.expression import render_conversation
+from gan_simlab.interaction import build_interaction_validation, generate_interactions
+from gan_simlab.persona import build_persona_snapshot
+from gan_simlab.runner.execution import RunMode
+from gan_simlab.runner.kernel_client import run_kernel
+from gan_simlab.runner.population import prepare_simulation_input
+from gan_simlab.schemas.scenario import InterventionKind, Scenario
 
 
 def test_interaction_validation_checks_rumor_amplification_alignment() -> None:

@@ -16,7 +16,7 @@ Work top to bottom. Do not broaden scope while this list is open.
 
 ## 2. Interaction Schema
 
-- [x] Create `python/simlab/interaction/`
+- [x] Create `python/gan_simlab/interaction/`
 - [x] Define `AgentAction`
 - [x] Define `Message`
 - [x] Define `Reaction`
@@ -55,7 +55,7 @@ Work top to bottom. Do not broaden scope while this list is open.
 
 ## 6. First Expression Pass
 
-- [x] Create `python/simlab/expression/`
+- [x] Create `python/gan_simlab/expression/`
 - [x] Add template renderer for `post`
 - [x] Add template renderer for `reply`
 - [x] Use `tone_style`

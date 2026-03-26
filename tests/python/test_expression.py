@@ -1,5 +1,5 @@
-from simlab.expression import render_conversation
-from simlab.schemas.artifacts import ThreadMessage
+from gan_simlab.expression import render_conversation
+from gan_simlab.schemas.artifacts import ThreadMessage
 
 
 def test_render_conversation_reflects_tone_and_argument_style() -> None:

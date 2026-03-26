@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from simlab.runner.execution import RunMode
-from simlab.schemas.scenario import Scenario
-from simlab.tools.benchmark_runs import benchmark_scenario_sizes
+from gan_simlab.runner.execution import RunMode
+from gan_simlab.schemas.scenario import Scenario
+from gan_simlab.tools.benchmark_runs import benchmark_scenario_sizes
 
 
 def test_benchmark_scenario_sizes_returns_runtime_metrics() -> None:

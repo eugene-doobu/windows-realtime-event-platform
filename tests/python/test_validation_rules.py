@@ -1,4 +1,4 @@
-from simlab.validation.checks import build_schema_validation
+from gan_simlab.validation.checks import build_schema_validation
 
 
 def test_schema_validation_placeholder_passes() -> None:
